@@ -1,0 +1,5 @@
+# macOS
+.DS_Store
+
+# 用户本地配置 (仅保留 .example 模板入库)
+vpn_route.conf
