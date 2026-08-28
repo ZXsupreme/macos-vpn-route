@@ -3,3 +3,12 @@
 
 # 用户本地配置 (仅保留 .example 模板入库)
 vpn_route.conf
+
+# IDE
+.idea/
+
+# app 构建产物
+app/node_modules/
+app/out/
+app/dist/
+app/*.tsbuildinfo

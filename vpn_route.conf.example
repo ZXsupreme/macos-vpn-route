@@ -20,9 +20,12 @@ CLEANUP_HOSTS=("10.20.1.10" "10.20.1.11")
 # =============================================================================
 # VPN_NAMES 为所有 VPN 名称列表 (建议小写英文)
 # 每个名称 N 在脚本内部转大写后对应以下变量:
-#   N_DETECT_SUBNET  识别特征，该 VPN 网卡 IP 所在网段前缀 (如 "10.8")
+#   N_DETECT_INET6   识别特征，该 VPN 网卡 IPv6 地址前缀 (如 "fd00:abcd")，最稳定，推荐配置
+#   N_DETECT_SUBNET  识别特征，该 VPN 网卡 IPv4 所在网段前缀 (如 "10.8")
+#                    (部分 VPN 客户端 IPv4 网段会变化，此时应改用 N_DETECT_INET6)
 #   N_ROUTE_NETS     走该 VPN 的网段数组 (CIDR)
 #   N_ROUTE_HOSTS    走该 VPN 的单机 IP 数组 (不在网段内的主机)
+# DETECT_INET6 与 DETECT_SUBNET 至少配一个，同时配置时按 IPv6 优先
 
 VPN_NAMES=("vpn_a" "vpn_b")
 

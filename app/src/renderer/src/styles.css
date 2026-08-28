@@ -1,0 +1,664 @@
+/* ============ 主题变量（浅色为默认，深色走 prefers-color-scheme；
+   Electron 的 nativeTheme.themeSource 会驱动该查询，设置里的外观切换因此零 JS 生效） ============ */
+:root {
+  --grey: #9a9aa2;
+  --blue: #0a84ff;
+  --green: #27a34a;
+  --yellow: #c7a600;
+  --red: #e0362b;
+
+  --fg: rgba(15, 17, 22, 0.92);
+  --fg-dim: rgba(15, 17, 22, 0.6);
+  --fg-faint: rgba(15, 17, 22, 0.4);
+  --bg-app: #eef0f4;
+  --bg-panel: linear-gradient(160deg, #f7f8fa 0%, #eef0f4 100%);
+  --bg-card: rgba(0, 0, 0, 0.045);
+  --bg-elev: #ffffff;
+  --border: rgba(0, 0, 0, 0.14);
+  --border-soft: rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --grey: #8e8e93;
+    --green: #30d158;
+    --yellow: #ffd60a;
+    --red: #ff453a;
+
+    --fg: rgba(255, 255, 255, 0.94);
+    --fg-dim: rgba(255, 255, 255, 0.66);
+    --fg-faint: rgba(255, 255, 255, 0.42);
+    --bg-app: #16181d;
+    --bg-panel: linear-gradient(160deg, #1b1e26 0%, #14161c 100%);
+    --bg-card: rgba(255, 255, 255, 0.08);
+    --bg-elev: rgba(255, 255, 255, 0.07);
+    --border: rgba(255, 255, 255, 0.14);
+    --border-soft: rgba(255, 255, 255, 0.07);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-size: 13px;
+  color: var(--fg);
+  background: var(--bg-app);
+  overflow: hidden;
+  user-select: none;
+  cursor: default;
+}
+
+.panel {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 10px;
+  overflow-y: auto;
+  background: var(--bg-panel);
+}
+
+/* 顶部 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+button {
+  background: var(--bg-card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--border-soft);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* 卡片 */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.card-title {
+  font-size: 11px;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+/* VPN 行 */
+.vpn-row {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.vpn-row:last-of-type {
+  border-bottom: none;
+}
+
+.vpn-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.badge {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
+}
+
+.badge.ok {
+  background: var(--green);
+}
+
+.badge.fail {
+  background: var(--red);
+}
+
+.vpn-name {
+  font-weight: 600;
+}
+
+.vpn-if {
+  color: var(--fg-dim);
+  font-size: 12px;
+}
+
+.vpn-if .method {
+  color: var(--fg-faint);
+}
+
+.miss {
+  color: var(--red);
+}
+
+/* 路由列表 */
+.routes {
+  list-style: none;
+  margin: 6px 0 2px 23px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.routes li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--fg-dim);
+}
+
+.routes li.bad code {
+  color: var(--red);
+}
+
+.mark {
+  width: 14px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.mark.ok {
+  color: var(--green);
+}
+
+.mark.fail {
+  color: var(--red);
+}
+
+.mark.warn {
+  color: var(--yellow);
+}
+
+code {
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 11.5px;
+}
+
+.arrow {
+  color: var(--fg-faint);
+}
+
+.default-route {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-soft);
+  color: var(--fg-dim);
+  font-size: 12px;
+}
+
+/* 测试列表 */
+.tests {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tests li {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.t-desc {
+  min-width: 72px;
+  font-weight: 500;
+}
+
+.t-detail {
+  color: var(--fg-dim);
+  font-size: 12px;
+}
+
+.t-detail.fail {
+  color: var(--red);
+}
+
+.t-detail.warn {
+  color: var(--yellow);
+}
+
+/* 底部 */
+.footer {
+  margin-top: auto;
+  color: var(--fg-faint);
+  font-size: 10.5px;
+  text-align: center;
+  padding-top: 6px;
+}
+
+/* 操作栏 */
+.op-bar {
+  display: flex;
+  gap: 8px;
+}
+
+.op-bar .primary {
+  flex: 1;
+  background: var(--blue);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  padding: 7px 0;
+  font-size: 13px;
+}
+
+.op-bar .primary:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.op-bar .danger {
+  background: transparent;
+  border-color: var(--red);
+  color: var(--red);
+  padding: 7px 14px;
+}
+
+.op-bar .danger:hover:not(:disabled) {
+  background: rgba(255, 69, 58, 0.12);
+}
+
+/* 设置 */
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  gap: 8px;
+}
+
+.setting-row span {
+  color: var(--fg-dim);
+}
+
+.switch {
+  min-width: 44px;
+}
+
+.switch.on {
+  background: var(--green);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+}
+
+.setting-hint {
+  color: var(--fg-faint);
+  font-size: 11px;
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+.profile-select,
+.theme-select {
+  background: var(--bg-card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  min-width: 120px;
+}
+
+/* 网络学习 */
+.learn-intro {
+  color: var(--fg-dim);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.learn-row {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-soft);
+  align-items: flex-start;
+}
+
+.learn-row:last-of-type {
+  border-bottom: none;
+}
+
+.learn-check {
+  padding-top: 5px;
+}
+
+.learn-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.learn-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.learn-name {
+  width: 90px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--fg);
+  padding: 3px 7px;
+  font-size: 12px;
+}
+
+.learn-iface {
+  color: var(--fg-dim);
+  font-size: 11.5px;
+  font-family: 'SF Mono', Menlo, monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.learn-detail {
+  color: var(--fg-faint);
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.learn-nets {
+  margin-top: 4px;
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 11px;
+  color: var(--fg-dim);
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.learn-nets.warn {
+  color: var(--yellow);
+}
+
+.learn-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.learn-actions .primary {
+  flex: 1;
+  background: var(--blue);
+  border-color: transparent;
+  color: #fff;
+}
+
+.learn-result {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--fg-dim);
+}
+
+/* 事件流水 */
+.eventlog {
+  max-height: 180px;
+  overflow-y: auto;
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--fg-dim);
+}
+
+.ev {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ev.tone-ok {
+  color: var(--green);
+}
+
+.ev.tone-warn {
+  color: var(--yellow);
+}
+
+.ev.tone-fail {
+  color: var(--red);
+}
+
+.ev.tone-info {
+  color: var(--fg-dim);
+}
+
+.ev-empty {
+  color: var(--fg-faint);
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* ============ 配置编辑器（独立窗口，跟随主题） ============ */
+.editor {
+  min-height: 100vh;
+  background: var(--bg-app);
+  color: var(--fg);
+  padding: 20px 24px;
+  overflow-y: auto;
+  user-select: text;
+}
+
+.ed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ed-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ed-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.editor button {
+  background: var(--bg-elev);
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+
+.editor button:hover:not(:disabled) {
+  background: var(--border-soft);
+}
+
+.editor button.primary {
+  background: var(--blue);
+  border-color: transparent;
+  color: #fff;
+}
+
+.editor button.danger {
+  color: var(--red);
+  border-color: var(--red);
+  background: transparent;
+}
+
+.ed-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ed-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.ed-card h2 {
+  font-size: 13px;
+  color: var(--fg-dim);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.editor label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--fg-dim);
+  margin-bottom: 10px;
+}
+
+.editor input,
+.editor textarea,
+.editor select {
+  font-size: 13px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elev);
+  color: var(--fg);
+  font-family: 'SF Mono', Menlo, monospace;
+}
+
+.editor textarea {
+  resize: vertical;
+}
+
+.ed-vpn {
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.ed-vpn-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.ed-name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.ed-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+}
+
+.ed-tests {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+
+.ed-tests th {
+  text-align: left;
+  font-size: 11px;
+  color: var(--fg-faint);
+  padding: 4px 6px;
+  font-weight: 500;
+}
+
+.ed-tests td {
+  padding: 3px 4px;
+}
+
+.ed-tests input,
+.ed-tests select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ed-port {
+  width: 64px;
+}
+
+.ed-raw {
+  width: 100%;
+  min-height: 60vh;
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  color: var(--fg);
+  tab-size: 4;
+}
+
+.ed-error {
+  background: rgba(255, 69, 58, 0.12);
+  color: var(--red);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.ed-ok {
+  background: rgba(48, 209, 88, 0.14);
+  color: var(--green);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}

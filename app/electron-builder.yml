@@ -1,0 +1,26 @@
+appId: com.xsupreme.vpnroutebar
+productName: VPNRouteBar
+directories:
+  buildResources: resources
+  output: dist
+files:
+  - out/**
+  - package.json
+extraResources:
+  # vpn_route.sh 随包分发（打包态 sourceScriptPath 从这里取，安装到 /Library 的 root 副本源）
+  - from: ../vpn_route.sh
+    to: vpn_route.sh
+  - from: resources/icons
+    to: icons
+asar: true
+mac:
+  icon: resources/icon.icns
+  category: public.app-category.utilities
+  extendInfo:
+    LSUIElement: true # 菜单栏应用：不出现在 Dock / 应用切换器
+  target:
+    - target: dmg
+      arch: [arm64]
+electronLanguages:
+  - zh-CN
+  - en
