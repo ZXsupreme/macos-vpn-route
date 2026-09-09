@@ -440,7 +440,10 @@ test_tcp() {
 
 test_domain() {
     local domain=$1 port=$2 ip
-    ip=$(host "$domain" 2>/dev/null | awk '/has address/{print $4; exit}')
+    # 解析优先级: dscacheutil (系统解析器，含 /etc/hosts) -> host -> nslookup
+    # (host/nslookup 是纯 DNS 工具，会绕过 hosts 文件，内网域名固定会解析失败)
+    ip=$(dscacheutil -q host -a name "$domain" 2>/dev/null | awk '/^ip_address:/ && $2 ~ /\./ {print $2; exit}')
+    [ -z "$ip" ] && ip=$(host "$domain" 2>/dev/null | awk '/has address/{print $4; exit}')
     [ -z "$ip" ] && ip=$(nslookup "$domain" 2>/dev/null | awk '/^Address: /{print $2}' | tail -1)
     if [ -z "$ip" ]; then
         RESULT_CODE=2; RESULT_DETAIL="解析失败 ($domain)"
