@@ -14,7 +14,7 @@ CONF_FILE="${VPN_ROUTE_CONF:-$HOME/.vpn_route.conf}"
 WIFI_SERVICE="Wi-Fi"
 DNS_SERVERS=(); CLEANUP_NETS=(); CLEANUP_HOSTS=(); VPN_NAMES=(); TESTS=()
 JSON_MODE=0                       # --json 时置 1：stdout 只输出 JSONL，人类输出全部静默
-SCRIPT_VERSION="2.1"
+SCRIPT_VERSION="2.2"
 
 # --- 工具函数 ---
 # JSON 模式下 info/ok/warn/err 与散落的格式化 echo 全部静默，保证 stdout 纯 JSONL
@@ -292,6 +292,23 @@ do_clean() {
             emit_route delete "" host "$n" "" false
         fi
     done
+
+    # DNS 还原：仅在没有任何 VPN 在线时执行（VPN 客户端常把 Wi-Fi DNS 改成内网 DNS，
+    # 全断后若不还原，内网 DNS 失联会连累公网解析）。Empty = 清除手动 DNS，回落 DHCP。
+    local any_vpn=0 dname
+    for dname in "${VPN_NAMES[@]}"; do
+        if detect_if "$dname" >/dev/null 2>&1; then any_vpn=1; break; fi
+    done
+    if [ "$any_vpn" -eq 0 ] && [ -n "$WIFI_SERVICE" ]; then
+        if sudo networksetup -setdnsservers "$WIFI_SERVICE" Empty 2>/dev/null; then
+            ok "DNS 已还原为自动获取 (DHCP)"
+            emit_phase dns-reset true "已清除手动 DNS -> $WIFI_SERVICE"
+        else
+            warn "DNS 还原失败"
+            emit_phase dns-reset false "networksetup 执行失败"
+        fi
+    fi
+
     ok "清理完成"
     emit "{\"event\":\"clean_end\",\"ok\":true}"
 }
